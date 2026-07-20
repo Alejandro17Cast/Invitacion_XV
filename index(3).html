@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0A1F44" />
+  <meta name="description" content="Invitación digital de XV años de Elizabeth" />
+  <title>Mis Quince | Elizabeth</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy: #0A1F44;
+      --navy-2: #1B2F6E;
+      --gold: #C9A24B;
+      --gold-2: #D4AF37;
+      --white: #ffffff;
+      --soft: #f7f4ed;
+      --text: #17213b;
+      --card: rgba(255, 255, 255, 0.9);
+      --shadow: 0 20px 50px rgba(10, 31, 68, 0.18);
+      --content-max: 480px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      background: var(--navy);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(212,175,55,.14), transparent 24%),
+        linear-gradient(180deg, #07162f 0%, var(--navy) 50%, #07162f 100%);
+    }
+
+    button, a, input { font: inherit; }
+    a { color: inherit; }
+
+    #sparkleCanvas,
+    .confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    #sparkleCanvas { z-index: 1; }
+    .confetti-canvas { z-index: 7; }
+
+    main {
+      position: relative;
+      z-index: 2;
+      width: min(100%, var(--content-max));
+      margin: 0 auto;
+      background: var(--navy);
+      box-shadow: 0 0 80px rgba(0, 0, 0, .35);
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100svh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      isolation: isolate;
+      padding: 78px 28px 88px;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,.08), transparent 30%),
+        linear-gradient(160deg, #07162f 0%, var(--navy) 55%, var(--navy-2) 100%);
+      border-bottom: 1px solid rgba(201,162,75,.22);
+    }
+
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(201,162,75,.65);
+      border-radius: 24px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 25px;
+      border: 1px solid rgba(201,162,75,.20);
+      border-radius: 18px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .scene-content {
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .scene-content > * { margin-left: auto; margin-right: auto; }
+
+    .script {
+      font-family: "Alex Brush", cursive;
+      font-weight: 400;
+      line-height: .95;
+      margin: 0;
+      color: var(--gold-2);
+      text-wrap: balance;
+    }
+
+    .shimmer {
+      background: linear-gradient(100deg, var(--gold) 0%, #fff4b0 35%, var(--gold-2) 55%, #fff4b0 70%, var(--gold) 100%);
+      background-size: 220% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent !important;
+      animation: shimmer 3.5s linear infinite;
+      filter: drop-shadow(0 6px 14px rgba(201,162,75,.24));
+    }
+
+    .cover-title { font-size: clamp(4.2rem, 18vw, 6.8rem); }
+    .name { font-size: clamp(3rem, 14vw, 5.3rem); margin-top: 14px; }
+    .section-title { font-size: clamp(3rem, 12vw, 4.8rem); margin-bottom: 26px; }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--gold);
+      font-size: .78rem;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .body-text {
+      margin: 0;
+      max-width: 390px;
+      color: rgba(255,255,255,.94);
+      font-size: clamp(1.02rem, 4.6vw, 1.2rem);
+      line-height: 1.75;
+      text-wrap: pretty;
+    }
+
+    .small-note {
+      margin-top: 18px;
+      font-size: .9rem;
+      opacity: .78;
+    }
+
+    .crown {
+      width: 126px;
+      height: auto;
+      margin: 30px auto 18px;
+      filter: drop-shadow(0 12px 18px rgba(201,162,75,.25));
+      animation: crownFloat 4.5s ease-in-out infinite;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 24px auto;
+      color: var(--gold);
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      width: 60px;
+      height: 1px;
+      background: currentColor;
+      opacity: .6;
+    }
+
+    .divider span { font-size: 1.15rem; }
+
+    .card {
+      width: 100%;
+      margin-top: 22px;
+      padding: 24px 20px;
+      border: 1px solid rgba(201,162,75,.52);
+      border-radius: 22px;
+      background: rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .detail-label {
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: .76rem;
+      margin-bottom: 10px;
+    }
+
+    .detail-value {
+      font-size: 1.1rem;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      margin-top: 22px;
+      padding: 14px 22px;
+      border: 0;
+      border-radius: 999px;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: .02em;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: var(--navy);
+      box-shadow: 0 12px 26px rgba(201,162,75,.3);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 30px rgba(201,162,75,.38);
+    }
+
+    .btn.secondary {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 28px auto 0;
+      max-width: 390px;
+    }
+
+    .countdown-item {
+      border: 1px solid rgba(201,162,75,.5);
+      border-radius: 16px;
+      padding: 12px 5px;
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 10px 22px rgba(10,31,68,.08);
+    }
+
+    .countdown strong {
+      display: block;
+      color: var(--white);
+      font-size: 1.35rem;
+    }
+
+    .countdown span {
+      color: var(--gold);
+      font-size: .65rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translate3d(0, 34px, 0);
+      transition: opacity .9s ease, transform .9s cubic-bezier(.2,.75,.2,1);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .corner {
+      position: absolute;
+      width: 112px;
+      height: 112px;
+      opacity: .74;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .corner.tl { top: 0; left: 0; }
+    .corner.tr { top: 0; right: 0; transform: scaleX(-1); }
+    .corner.bl { bottom: 0; left: 0; transform: scaleY(-1); }
+    .corner.br { bottom: 0; right: 0; transform: scale(-1); }
+
+    .butterfly {
+      position: absolute;
+      z-index: 4;
+      width: var(--size, 38px);
+      opacity: var(--opacity, .78);
+      color: var(--color, var(--gold));
+      pointer-events: none;
+      animation:
+        fly var(--duration, 9s) ease-in-out var(--delay, 0s) infinite alternate,
+        drift var(--drift, 5s) ease-in-out var(--delay, 0s) infinite;
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    .butterfly svg { overflow: visible; }
+    .butterfly .wing-left,
+    .butterfly .wing-right {
+      transform-box: fill-box;
+      transform-origin: center right;
+      animation: flap .42s ease-in-out infinite alternate;
+    }
+
+    .butterfly .wing-right {
+      transform-origin: center left;
+      animation-delay: -.2s;
+    }
+
+    .butterfly.b1 { left: 8%; top: 18%; --size: 32px; --duration: 8s; --drift: 4.4s; }
+    .butterfly.b2 { right: 7%; top: 30%; --size: 46px; --duration: 11s; --drift: 6.2s; --delay: -3s; --color: #8fa7e7; }
+    .butterfly.b3 { left: 17%; bottom: 12%; --size: 25px; --duration: 7.5s; --drift: 5.5s; --delay: -1.5s; --opacity: .55; }
+
+    .music-control {
+      position: fixed;
+      z-index: 20;
+      right: max(18px, calc((100vw - var(--content-max)) / 2 + 18px));
+      bottom: 20px;
+      display: grid;
+      grid-template-columns: 48px;
+      gap: 8px;
+    }
+
+    .music-button {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(212,175,55,.75);
+      background: rgba(10,31,68,.92);
+      color: var(--gold-2);
+      box-shadow: 0 10px 28px rgba(0,0,0,.24);
+      cursor: pointer;
+      transition: transform .2s ease;
+    }
+
+    .music-button:hover:hover { transform: scale(1.06); }
+    .music-button.playing { animation: musicPulse 1.4s ease-in-out infinite; }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 34px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: .72rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.66);
+      animation: cue 1.8s ease-in-out infinite;
+    }
+
+    .hidden-accessible {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes shimmer {
+      to { background-position: -220% center; }
+    }
+
+    @keyframes crownFloat {
+      0%,100% { transform: translate3d(0,0,0) rotate(-1deg); }
+      50% { transform: translate3d(0,-9px,0) rotate(1deg); }
+    }
+
+    @keyframes fly {
+      0% { transform: translate3d(-8px, 8px, 0) rotate(-7deg); }
+      35% { transform: translate3d(18px, -12px, 0) rotate(5deg); }
+      70% { transform: translate3d(-12px, -24px, 0) rotate(-3deg); }
+      100% { transform: translate3d(24px, 10px, 0) rotate(8deg); }
+    }
+
+    @keyframes drift {
+      0%, 100% { margin-top: 0; }
+      50% { margin-top: 14px; }
+    }
+
+    @keyframes flap {
+      from { transform: rotateY(0deg) scaleX(1); }
+      to { transform: rotateY(58deg) scaleX(.72); }
+    }
+
+    @keyframes musicPulse {
+      50% { box-shadow: 0 0 0 10px rgba(212,175,55,.12), 0 10px 28px rgba(0,0,0,.24); }
+    }
+
+    @keyframes cue {
+      50% { transform: translate(-50%, 8px); opacity: .45; }
+    }
+
+    @media (min-width: 700px) {
+      body { padding: 24px 0; }
+      main { border-radius: 30px; overflow: hidden; }
+      .scene { min-height: calc(100vh - 48px); }
+    }
+
+ @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+  </style>
+</head>
+<body>
+  <canvas id="sparkleCanvas" aria-hidden="true"></canvas>
+  <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+
+  <main id="invitation">
+    <section class="scene" id="portada" data-confetti>
+      <div class="corner tl" data-corner></div><div class="corner tr" data-corner></div><div class="corner bl" data-corner></div><div class="corner br" data-corner></div>
+      <div class="butterfly b1" data-butterfly></div><div class="butterfly b2" data-butterfly></div><div class="butterfly b3" data-butterfly></div>
+      <div class="scene-content reveal">
+        <p class="eyebrow" id="coverDate">Una fecha para recordar</p>
+        <h1 class="script cover-title shimmer">Mis Quince</h1>
+        <div class="crown" id="crown"></div>
+        <p class="script name shimmer" data-bind="name">Camila</p>
+        <div class="countdown" aria-label="Cuenta regresiva">
+          <div class="countdown-item"><strong id="days">00</strong><span>Días</span></div>
+          <div class="countdown-item"><strong id="hours">00</strong><span>Horas</span></div>
+          <div class="countdown-item"><strong id="minutes">00</strong><span>Min</span></div>
+          <div class="countdown-item"><strong id="seconds">00</strong><span>Seg</span></div>
+        </div>
+      </div>
+      <div class="scroll-cue">Desliza</div>
+    </section>
+
+    <section class="scene" id="bienvenida">
+      <div class="corner tl" data-corner></div><div class="corner tr" data-corner></div><div class="corner bl" data-corner></div><div class="corner br" data-corner></div>
+      <div class="butterfly b1" data-butterfly></div><div class="butterfly b2" data-butterfly></div><div class="butterfly b3" data-butterfly></div>
+      <div class="scene-content reveal">
+        <p class="eyebrow">Con amor</p>
+        <h2 class="script section-title shimmer">Bienvenidos</h2>
+        <p class="body-text">Hace quince años nació una hermosa niña, enviada por Dios para ser criada y formada como el más grande tesoro. Hay momentos en la vida que anhelamos y esperamos.</p>
+      </div>
+    </section>
+
+    <section class="scene" id="padres">
+  <div class="scene-content reveal">
+    <p class="eyebrow">Con mucho cariño</p>
+
+    <h2 class="script section-title shimmer">
+      Con la bendición de Dios y de mi madre
+    </h2>
+
+    <p class="body-text">
+      <strong>Sra. Regina Diaz Morales</strong>
+    </p>
+  </div>
+</section>
+    
+
+    <section class="scene" id="invitacion">
+      <div class="corner tl" data-corner></div><div class="corner tr" data-corner></div><div class="corner bl" data-corner></div><div class="corner br" data-corner></div>
+      <div class="butterfly b1" data-butterfly></div><div class="butterfly b2" data-butterfly></div><div class="butterfly b3" data-butterfly></div>
+      <div class="scene-content reveal">
+        <p class="eyebrow">Celebremos juntos</p>
+        <h2 class="script section-title shimmer">La Invitación</h2>
+        <p class="body-text">Nos complace invitarlos a celebrar los 15 años de mi amada princesa.</p>
+        <div class="divider"><span>✦</span></div>
+        <p class="script name" data-bind="name">Camila</p>
+      </div>
+    </section>
+
+    <section class="scene" id="mensaje">
+      <div class="corner tl" data-corner></div><div class="corner tr" data-corner></div><div class="corner bl" data-corner></div><div class="corner br" data-corner></div>
+      <div class="butterfly b1" data-butterfly></div><div class="butterfly b2" data-butterfly></div><div class="butterfly b3" data-butterfly></div>
+      <div class="scene-content reveal">
+        <p class="eyebrow">Un recuerdo eterno</p>
+        <h2 class="script section-title shimmer">Para Ti</h2>
+        <p class="body-text">He aprendido que estar con quienes quiero es suficiente para ser feliz. Ten por seguro que el tiempo y estas letras se borrarían, pero el recuerdo de tu presencia este día nunca lo olvidaré.</p>
+      </div>
+    </section>
+
+    <section class="scene" id="ubicacion">
+      <div class="corner tl" data-corner></div><div class="corner tr" data-corner></div><div class="corner bl" data-corner></div><div class="corner br" data-corner></div>
+      <div class="butterfly b1" data-butterfly></div><div class="butterfly b2" data-butterfly></div><div class="butterfly b3" data-butterfly></div>
+      <div class="scene-content reveal">
+        <p class="eyebrow">Dónde y cuándo</p>
+        <h2 class="script section-title shimmer">Celebración</h2>
+        <div class="card">
+          <div class="detail-label">Dirección</div>
+          <p class="detail-value" data-bind="address">[Dirección de la casa]</p>
+          <div class="divider"><span>✦</span></div>
+          <div class="detail-label">Hora de inicio</div>
+          <p class="detail-value" data-bind="startTime">[Hora]</p>
+          <a class="btn" id="mapsLink" href="#" target="_blank" rel="noopener">📍 Ver en Google Maps</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" id="confirmacion">
+      <div class="corner tl" data-corner></div><div class="corner tr" data-corner></div><div class="corner bl" data-corner></div><div class="corner br" data-corner></div>
+      <div class="butterfly b1" data-butterfly></div><div class="butterfly b2" data-butterfly></div><div class="butterfly b3" data-butterfly></div>
+      <div class="scene-content reveal">
+        <p class="eyebrow">Tu presencia es el mejor regalo</p>
+        <h2 class="script section-title shimmer">¡Lluvia de Sobres!</h2>
+        <p class="body-text">Gracias por acompañarnos en un día tan especial. Confirma tu asistencia para celebrar juntos.</p>
+        <a class="btn" id="whatsappLink" href="#" target="_blank" rel="noopener"> Confirmar asistencia</a>
+      </div>
+    </section>
+
+    <section class="scene" id="cierre" data-confetti>
+      <div class="corner tl" data-corner></div><div class="corner tr" data-corner></div><div class="corner bl" data-corner></div><div class="corner br" data-corner></div>
+      <div class="butterfly b1" data-butterfly></div><div class="butterfly b2" data-butterfly></div><div class="butterfly b3" data-butterfly></div>
+      <div class="scene-content reveal">
+        <p class="eyebrow">Con mucho cariño</p>
+        <h2 class="script cover-title shimmer">Te Esperamos</h2>
+        <div class="crown" id="crownClose"></div>
+        <p class="script name shimmer" data-bind="name">Camila</p>
+        <p class="small-note" data-bind="eventDateText">[05 de Septiembre]</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="music-control" aria-label="Controles de música">
+    <button class="music-button" id="musicButton" type="button" aria-label="Reproducir música" title="Reproducir o pausar música">♫</button>
+    <audio id="bgMusic" src="musica.mp3" loop preload="metadata"></audio>
+  </div>
+
+  <script>
+    /* ============================================================
+       DATOS EDITABLES DE LA INVITACIÓN
+       Cambia únicamente estas variables para personalizar el sitio.
+       ============================================================ */
+    const INVITATION = {
+      name: "Camila",
+      address: "[Casa de Habitación]",
+      startTime: "6:30 PM",
+      eventDate: "2026-09-05T18:30:00", // Formato: AAAA-MM-DDTHH:MM:SS
+      eventDateText: "05 de septiembre de 2026",
+      mapsUrl: "https://www.google.com/maps?q=12.08279,-86.36160",
+      whatsappNumber: "50588478064", // Código de país + número, sin + ni espacios
+      whatsappMessage: "Confirmo mi asistencia a los XV años de Camila. ¡Nos vemos en la celebración!"
+    };
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // SVG reutilizables
+    const butterflySVG = `
+      <svg viewBox="0 0 80 60" aria-hidden="true">
+        <g fill="currentColor">
+          <path class="wing-left" d="M38 30C27 4 4 3 5 18c1 12 14 16 28 15C16 38 10 51 21 55c10 3 17-9 19-22z"/>
+          <path class="wing-right" d="M42 30C53 4 76 3 75 18c-1 12-14 16-28 15 17 5 23 18 12 22-10 3-17-9-19-22z"/>
+          <ellipse cx="40" cy="31" rx="3.3" ry="17"/>
+          <path d="M39 14c-5-7-8-7-10-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M41 14c5-7 8-7 10-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </g>
+      </svg>`;
+
+    const cornerSVG = `
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <g fill="none" stroke="#C9A24B" stroke-width="1.4" stroke-linecap="round">
+          <path d="M3 92C23 76 30 54 31 25"/>
+          <path d="M12 105C38 88 55 60 59 18" opacity=".65"/>
+          <path d="M30 59c-17-11-20-20-9-27 10-5 18 5 9 27Z" fill="#C9A24B" opacity=".18"/>
+          <path d="M42 72c-4-18 2-26 13-22 10 4 6 15-13 22Z" fill="#1B2F6E" opacity=".20"/>
+          <circle cx="32" cy="25" r="5" fill="#C9A24B" opacity=".5"/>
+          <circle cx="59" cy="18" r="4" fill="#1B2F6E" opacity=".45"/>
+          <path d="M4 6h55M4 6v55" opacity=".55"/>
+        </g>
+      </svg>`;
+
+    const crownSVG = `
+      <svg viewBox="0 0 180 110" aria-hidden="true">
+        <defs>
+          <linearGradient id="goldCrown" x1="0" x2="1">
+            <stop offset="0" stop-color="#C9A24B"/><stop offset=".5" stop-color="#fff0a8"/><stop offset="1" stop-color="#D4AF37"/>
+          </linearGradient>
+        </defs>
+        <path d="M25 76 12 31l39 24L89 10l40 45 39-24-14 45Z" fill="none" stroke="url(#goldCrown)" stroke-width="6" stroke-linejoin="round"/>
+        <path d="M28 84h126v14H28z" rx="7" fill="url(#goldCrown)"/>
+        <circle cx="12" cy="31" r="6" fill="#D4AF37"/><circle cx="89" cy="10" r="7" fill="#fff0a8"/><circle cx="168" cy="31" r="6" fill="#D4AF37"/>
+        <circle cx="51" cy="55" r="5" fill="#D4AF37"/><circle cx="129" cy="55" r="5" fill="#D4AF37"/>
+      </svg>`;
+
+    document.querySelectorAll("[data-butterfly]").forEach(el => el.innerHTML = butterflySVG);
+    document.querySelectorAll("[data-corner]").forEach(el => el.innerHTML = cornerSVG);
+    document.getElementById("crown").innerHTML = crownSVG;
+    document.getElementById("crownClose").innerHTML = crownSVG;
+
+    // Aplicar contenido editable
+    Object.entries(INVITATION).forEach(([key, value]) => {
+      document.querySelectorAll(`[data-bind="${key}"]`).forEach(el => el.textContent = value);
+    });
+    document.getElementById("coverDate").textContent = INVITATION.eventDateText;
+    document.getElementById("mapsLink").href = INVITATION.mapsUrl;
+    document.getElementById("whatsappLink").href = `https://wa.me/${INVITATION.whatsappNumber}?text=${encodeURIComponent(INVITATION.whatsappMessage)}`;
+    document.title = `Mis Quince | ${INVITATION.name}`;
+
+    // Aparición por scroll
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("is-visible");
+      });
+    }, { threshold: 0.28 });
+    document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+
+    // Cuenta regresiva
+    const eventTime = new Date(INVITATION.eventDate).getTime();
+    function updateCountdown() {
+      const distance = Math.max(0, eventTime - Date.now());
+      const days = Math.floor(distance / 86400000);
+      const hours = Math.floor((distance % 86400000) / 3600000);
+      const minutes = Math.floor((distance % 3600000) / 60000);
+      const seconds = Math.floor((distance % 60000) / 1000);
+      document.getElementById("days").textContent = String(days).padStart(2, "0");
+      document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+      document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+      document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // Música fija: coloca un archivo llamado "musica.mp3" junto a index.html.
+    // Los invitados solo pueden reproducirla o pausarla.
+    const audio = document.getElementById("bgMusic");
+    const musicButton = document.getElementById("musicButton");
+
+    musicButton.addEventListener("click", async () => {
+      if (audio.paused) {
+        try {
+          await audio.play();
+          musicButton.classList.add("playing");
+          musicButton.textContent = "❚❚";
+          musicButton.setAttribute("aria-label", "Pausar música");
+        } catch (_) {
+          musicButton.title = "No se encontró musica.mp3";
+        }
+      } else {
+        audio.pause();
+        musicButton.classList.remove("playing");
+        musicButton.textContent = "♫";
+        musicButton.setAttribute("aria-label", "Reproducir música");
+      }
+    });
+
+    audio.addEventListener("error", () => {
+      musicButton.title = "Agrega musica.mp3 en la misma carpeta del index.html";
+    });
+
+    // Partículas doradas sutiles
+    const sparkleCanvas = document.getElementById("sparkleCanvas");
+    const sparkleCtx = sparkleCanvas.getContext("2d");
+    let sparkles = [];
+    let sparkleFrame;
+
+    function resizeSparkles() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      sparkleCanvas.width = innerWidth * ratio;
+      sparkleCanvas.height = innerHeight * ratio;
+      sparkleCanvas.style.width = innerWidth + "px";
+      sparkleCanvas.style.height = innerHeight + "px";
+      sparkleCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      sparkles = Array.from({ length: Math.min(32, Math.floor(innerWidth / 14)) }, () => ({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        r: Math.random() * 1.5 + .4,
+        speed: Math.random() * .22 + .05,
+        alpha: Math.random() * .45 + .12,
+        phase: Math.random() * Math.PI * 2
+      }));
+    }
+
+    function drawSparkles(t = 0) {
+      sparkleCtx.clearRect(0, 0, innerWidth, innerHeight);
+      sparkles.forEach(p => {
+        p.y -= p.speed;
+        if (p.y < -8) { p.y = innerHeight + 8; p.x = Math.random() * innerWidth; }
+        const pulse = p.alpha * (.65 + Math.sin(t * .0015 + p.phase) * .35);
+        sparkleCtx.beginPath();
+        sparkleCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        sparkleCtx.fillStyle = `rgba(212,175,55,${Math.max(.04, pulse)})`;
+        sparkleCtx.fill();
+      });
+      sparkleFrame = requestAnimationFrame(drawSparkles);
+    }
+
+    if (!prefersReducedMotion) {
+      resizeSparkles();
+      drawSparkles();
+      window.addEventListener("resize", resizeSparkles, { passive: true });
+    }
+
+    // Confeti liviano propio en canvas
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const confettiCtx = confettiCanvas.getContext("2d");
+    let confettiPieces = [];
+    let confettiAnimating = false;
+
+    function resizeConfetti() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      confettiCanvas.width = innerWidth * ratio;
+      confettiCanvas.height = innerHeight * ratio;
+      confettiCanvas.style.width = innerWidth + "px";
+      confettiCanvas.style.height = innerHeight + "px";
+      confettiCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    resizeConfetti();
+    window.addEventListener("resize", resizeConfetti, { passive: true });
+
+    function launchConfetti() {
+      if (prefersReducedMotion) return;
+      const colors = ["#D4AF37", "#C9A24B", "#0A1F44", "#1B2F6E", "#ffffff"];
+      confettiPieces = Array.from({ length: 70 }, () => ({
+        x: Math.random() * innerWidth,
+        y: -20 - Math.random() * innerHeight * .2,
+        w: Math.random() * 6 + 4,
+        h: Math.random() * 10 + 5,
+        vx: (Math.random() - .5) * 1.8,
+        vy: Math.random() * 2.4 + 1.4,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - .5) * .18,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        life: 0,
+        maxLife: 260 + Math.random() * 80
+      }));
+      if (!confettiAnimating) {
+        confettiAnimating = true;
+        requestAnimationFrame(drawConfetti);
+      }
+    }
+
+    function drawConfetti() {
+      confettiCtx.clearRect(0, 0, innerWidth, innerHeight);
+      confettiPieces = confettiPieces.filter(p => p.life < p.maxLife && p.y < innerHeight + 40);
+      confettiPieces.forEach(p => {
+        p.life++;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        p.vx += Math.sin(p.life * .03) * .003;
+        confettiCtx.save();
+        confettiCtx.translate(p.x, p.y);
+        confettiCtx.rotate(p.rot);
+        confettiCtx.fillStyle = p.color;
+        confettiCtx.globalAlpha = Math.max(0, 1 - p.life / p.maxLife);
+        confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        confettiCtx.restore();
+      });
+      if (confettiPieces.length) requestAnimationFrame(drawConfetti);
+      else {
+        confettiAnimating = false;
+        confettiCtx.clearRect(0, 0, innerWidth, innerHeight);
+      }
+    }
+
+    const confettiObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) launchConfetti();
+      });
+    }, { threshold: .6 });
+    document.querySelectorAll("[data-confetti]").forEach(el => confettiObserver.observe(el));
+  </script>
+</body>
+</html> 
